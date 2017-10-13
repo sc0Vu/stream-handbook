@@ -1,6 +1,6 @@
 # stream-handbook
 
-這份文說明 [node.js](http://nodejs.org/) [streams](http://nodejs.org/docs/latest/api/stream.html) 的基本使用方法 
+這份文件說明 [node.js](http://nodejs.org/) [streams](http://nodejs.org/docs/latest/api/stream.html) 的基本使用方法 
 
 其他翻譯版本
 
@@ -32,34 +32,42 @@ another way. This is the way of IO also."
 
 ***
 
-Streams come to us from the
-[earliest days of unix](http://www.youtube.com/watch?v=tc4ROCJYbm0)
-and have proven themselves over the decades as a dependable way to compose large
-systems out of small components that
-[do one thing well](http://www.faqs.org/docs/artu/ch01s06.html).
-In unix, streams are implemented by the shell with `|` pipes.
-In node, the built-in
-[stream module](http://nodejs.org/docs/latest/api/stream.html)
-is used by the core libraries and can also be used by user-space modules.
-Similar to unix, the node stream module's primary composition operator is called
-`.pipe()` and you get a backpressure mechanism for free to throttle writes for
-slow consumers.
+Streams 源自於
+[早期的 unix](http://www.youtube.com/watch?v=tc4ROCJYbm0)
+幾十年來也已經證明是個使用小型組件（[做一件事](http://www.faqs.org/docs/artu/ch01s06.html)）
+建立大型系統可靠的方式。
 
-Streams can help to
-[separate your concerns](http://www.c2.com/cgi/wiki?SeparationOfConcerns)
-because they restrict the implementation surface area into a consistent
-interface that can be
-[reused](http://www.faqs.org/docs/artu/ch01s06.html#id2877537).
-You can then plug the output of one stream to the input of another and
-[use libraries](http://npmjs.org) that operate abstractly on streams to
-institute higher-level flow control.
+在 unix, streams 由命令列的 `|` 管程實現。
 
-Streams are an important component of
+例如看目前運行的程序中有沒有 nginx
+```
+ps -A | grep nginx
+```
+
+在 node, 內建的
+[stream 模組](http://nodejs.org/docs/latest/api/stream.html)
+被很多核心套件使用也可以被使用者使用。
+
+和 unix 相似， node stream 模組的主要組成操作者被稱為
+`.pipe()` 而且你可以自由限制寫入
+客戶端的速度。
+
+Streams 可以幫助
+[分離你的顧慮](http://www.c2.com/cgi/wiki?SeparationOfConcerns)
+因為他們會限制實作的表面進入可以被
+[重複使用](http://www.faqs.org/docs/artu/ch01s06.html#id2877537)
+的一貫介面。
+你可以將一個回傳的 stream 帶入另一個抽象操作 streams 來進行流程控制的
+[套件](http://npmjs.org)或程式庫。
+
+Streams 是
 [small-program design](https://michaelochurch.wordpress.com/2012/08/15/what-is-spaghetti-code/)
-and [unix philosophy](http://www.faqs.org/docs/artu/ch01s06.html)
-but there are many other important abstractions worth considering.
-Just remember that [technical debt](http://c2.com/cgi/wiki?TechnicalDebt)
-is the enemy and to seek the best abstractions for the problem at hand.
+和 [unix philosophy](http://www.faqs.org/docs/artu/ch01s06.html)
+很重要的一部份
+但是還有更多抽象的部分值得考慮。
+
+一定要記得[技術債](http://c2.com/cgi/wiki?TechnicalDebt)
+是敵人也要尋找解決問題的最佳抽象。
 
 ![brian kernighan](http://substack.net/images/kernighan.png)
 
@@ -140,10 +148,9 @@ data through wonky non-streaming custom APIs.
 
 Streams make programming in node simple, elegant, and composable.
 
-# basics
+# 基本
 
-There are 5 kinds of streams: readable, writable, transform, duplex, and
-"classic".
+有五種基本的 streams: readable, writable, transform, duplex, 和 "classic".
 
 ## pipe
 
@@ -510,7 +517,7 @@ produce output.
 
 ## duplex
 
-Duplex streams are readable/writable and both ends of the stream engage
+Duplex streams are 可讀取/可寫入 and both ends of the stream engage
 in a two-way interaction, sending back and forth messages like a telephone. An
 rpc exchange is a good example of a duplex stream. Any time you see something
 like:
@@ -652,9 +659,9 @@ module to make your streams2 code compliant with node 0.8 and below. Just
 
 ***
 
-# built-in streams
+# 內建的 streams
 
-These streams are built into node itself.
+下面的 streams 是在 node 中內建的.
 
 ## process
 
