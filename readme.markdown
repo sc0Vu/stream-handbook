@@ -173,16 +173,15 @@ a | b | c | d
 
 ## readable streams
 
-Readable streams produce data that can be fed into a writable, transform, or
-duplex stream by calling `.pipe()`:
+可讀取的 streams 藉由呼叫 `.pipe()` 產生可被 writable, transform, duplex stream 使用的資料：
 
 ``` js
 readableStream.pipe(dst)
 ```
 
-### creating a readable stream
+### 建立一個 readable stream
 
-Let's make a readable stream!
+讓我們來建立一個 readable stream!
 
 ``` js
 var Readable = require('stream').Readable;
@@ -200,19 +199,17 @@ $ node read0.js
 beep boop
 ```
 
-`rs.push(null)` tells the consumer that `rs` is done outputting data.
+`rs.push(null)` 告訴消費者 `rs` 已經可以開始輸出資料了。
 
-Note here that we pushed content to the readable stream `rs` before piping to
-`process.stdout`, but the complete message was still written.
+注意：
+這邊我們是先將資料存進 `rs` 才連接
+`process.stdout`，但是所有的資料還是會被寫入。
 
-This is because when you `.push()` to a readable stream, the chunks you push are
-buffered until a consumer is ready to read them.
+這是因為 `.push()` 函數會將參數的資料緩存直到消費者開始讀取。
 
-However, it would be even better in many circumstances if we could avoid
-buffering data altogether and only generate the data when the consumer asks for
-it.
+然而，在很多情況下更好的方法是，我們避免緩存所有資料並且只在消費者要求時產生資料。
 
-We can push chunks on-demand by defining a `._read` function:
+我們可以定義 `._read` 函數來存入要求的區塊資料：
 
 ``` js
 var Readable = require('stream').Readable;
@@ -232,18 +229,13 @@ $ node read1.js
 abcdefghijklmnopqrstuvwxyz
 ```
 
-Here we push the letters `'a'` through `'z'`, inclusive, but only when the
-consumer is ready to read them.
+這段程式碼我們只在消費者讀取的時候存入 `'a'` 到 `'z'`。
 
-The `_read` function will also get a provisional `size` parameter as its first
-argument that specifies how many bytes the consumer wants to read, but your
-readable stream can ignore the `size` if it wants.
+`_read` 函數也可以提供 `size` 參數來設定消費者要讀取的位元數，不過 readable stream 也可以忽略 `size` 的設定。
 
-Note that you can also use `util.inherits()` to subclass a Readable stream, but
-that approach doesn't lend itself very well to comprehensible examples.
+你也可以使用 `util.inherits()` 來繼承 Readable stream，但是這種方法並不容易被理解。
 
-To show that our `_read` function is only being called when the consumer
-requests, we can modify our readable stream code slightly to add a delay:
+我們將我們的程式碼加入了一些延遲以讓各位瞭解 `_read` 只會在消費者要求資料時被呼叫：
 
 ```js
 var Readable = require('stream').Readable;
@@ -267,8 +259,7 @@ process.on('exit', function () {
 process.stdout.on('error', process.exit);
 ```
 
-Running this program we can see that `_read()` is only called 5 times when we
-only request 5 bytes of output:
+在這個程式中 `_read()` 只在我們請求5 bytes 的資料時被呼叫了5次：
 
 ```
 $ node read2.js | head -c5
@@ -276,21 +267,13 @@ abcde
 _read() called 5 times
 ```
 
-The setTimeout delay is necessary because the operating system requires some
-time to send us the relevant signals to close the pipe.
+因為作業系統需要一些時間告訴我們關閉 pipe 的相關信號，所以必須設定 setTimeout 的延遲。
 
-The `process.stdout.on('error', fn)` handler is also necessary because the
-operating system will send a SIGPIPE to our process when `head` is no longer
-interested in our program's output, which gets emitted as an EPIPE error on
-`process.stdout`.
+因為當 `read` 不再輸出就會對 `process.stdout` 發送 EPIPE 的錯誤，這時作業系統會對我們的程式發送 SIGPIPE 信號，所以必須要監聽 `process.stdout.on('error', fn)`。
 
-These extra complications are necessary when interfacing with the external
-operating system pipes but are automatic when we interface directly with node
-streams the whole time.
+當我們用 node 直接與外部作業系統的管程連接時，就必須加上這些額外複雜的程式。
 
-If you want to create a readable stream that pushes arbitrary values instead of
-just strings and buffers, make sure to create your readable stream with
-`Readable({ objectMode: true })`.
+如果想建立 readable stream 儲存非字串抽象的資料，記得建立 readable stream 時帶入 `Readable({ objectMode: true })`.
 
 ### consuming a readable stream
 
