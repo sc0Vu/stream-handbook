@@ -132,7 +132,7 @@ server.listen(8000);
 
 現在我們的檔案被壓縮給支援 gzip 或是 deflate 的瀏覽器！ 我們可以
 讓 [oppressor](https://github.com/substack/oppressor) 處理所有
-content-encoding 的事情.
+content-encoding 的事情。
 
 一旦學習了 stream api，你就可以像樂高或是軟管將 streams 模組結合一起
 而不用去記憶如何在沒有串流特定的 APIs 中使用資料。
@@ -141,41 +141,35 @@ Streams 使在 node 中編寫程式更加簡單、優雅且可分割。
 
 # 基本
 
-有五種基本的 streams: readable, writable, transform, duplex, 和 "classic".
+有五種基本的 streams：readable、writable、transform、duplex 和 classic。
 
 ## pipe
 
-All the different types of streams use `.pipe()` to pair inputs with outputs.
+所有的 streams 都是使用 `.pipe()` 來配對輸入和輸出。
 
-`.pipe()` is just a function that takes a readable source stream `src` and hooks
-the output to a destination writable stream `dst`:
+`.pipe()` 是個將可讀取的 stream `src` 綁定輸出到可寫入的 stream `dst` 函數：
 
 ```
 src.pipe(dst)
 ```
 
-`.pipe(dst)` returns `dst` so that you can chain together multiple `.pipe()`
-calls together:
+`.pipe(dst)` 回傳 `dst` 所以你也可以一起鏈接更多 `.pipe()` 函數：
 
 ``` js
 a.pipe(b).pipe(c).pipe(d)
 ```
-which is the same as:
-
+等同於：
 ``` js
 a.pipe(b);
 b.pipe(c);
 c.pipe(d);
 ```
 
-This is very much like what you might do on the command-line to pipe programs
-together:
+上面的程式碼就等同於在命令列輸入：
 
 ```
 a | b | c | d
 ```
-
-except in node instead of the shell!
 
 ## readable streams
 
