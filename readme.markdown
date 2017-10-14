@@ -75,9 +75,7 @@ Streams 是
 
 # 為甚麼應該使用 streams
 
-I/O in node is asynchronous, so interacting with the disk and network involves
-passing callbacks to functions. You might be tempted to write code that serves
-up a file from disk like this:
+I/O 在 node 裡可以使用非同步的方法操作，所以你可以使用 callbacks 來操作網路和檔案。 如果你想用個檔案伺服，你可能會用這種方式：
 
 ``` js
 var http = require('http');
@@ -91,18 +89,14 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-This code works but it's bulky and buffers up the entire `data.txt` file into
-memory for every request before writing the result back to clients. If
-`data.txt` is very large, your program could start eating a lot of memory as it
-serves lots of users concurrently, particularly for users on slow connections.
+這段程式碼可以運作，可是程式在回應每個請求前先將整個檔案 `data.txt` 讀進記憶體中。
+如果 `data.txt` 這個檔案非常大，這個程式如果有很多使用者同時連線的話會佔用很多的記憶體，尤其是連線速度慢的使用者。
 
-The user experience is poor too because users will need to wait for the whole
-file to be buffered into memory on your server before they can start receiving
-any contents.
+因為使用者必須等待整個檔案緩存在伺服器的記憶體中才會開始下載內容
+所以使用者的經驗也會非常的不佳。
 
-Luckily both of the `(req, res)` arguments are streams, which means we can write
-this in a much better way using `fs.createReadStream()` instead of
-`fs.readFile()`:
+幸好 `(req, res)` 兩個參數都是 streams，這表示我們可以使用 `fs.createReadStream()` 代替
+`fs.readFile()`：
 
 ``` js
 var http = require('http');
@@ -115,16 +109,14 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-Here `.pipe()` takes care of listening for `'data'` and `'end'` events from the
-`fs.createReadStream()`. This code is not only cleaner, but now the `data.txt`
-file will be written to clients one chunk at a time immediately as they are
-received from the disk.
+`.pipe()` 從 `fs.createReadStream()` 接管了監聽 `'data'` 和 `'end'` 事件。
+這段程式碼不僅簡潔也讓 `data.txt` 檔案的區塊被讀取時會立即寫入客戶端。
 
-Using `.pipe()` has other benefits too, like handling backpressure automatically
-so that node won't buffer chunks into memory needlessly when the remote client
-is on a really slow or high-latency connection.
+使用 `.pipe()` 還有其他優點，例如自動處理讀取壓力
+使得 node 當客戶端連線非常緩慢或是高延遲的連線時
+不需要將資料區塊緩存到記憶體。
 
-Want compression? There are streaming modules for that too!
+想要壓縮檔案嗎? 這當然也有 streaming 模組！
 
 ``` js
 var http = require('http');
@@ -138,15 +130,14 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-Now our file is compressed for browsers that support gzip or deflate! We can
-just let [oppressor](https://github.com/substack/oppressor) handle all that
-content-encoding stuff.
+現在我們的檔案被壓縮給支援 gzip 或是 deflate 的瀏覽器！ 我們可以
+讓 [oppressor](https://github.com/substack/oppressor) 處理所有
+content-encoding 的事情.
 
-Once you learn the stream api, you can just snap together these streaming
-modules like lego bricks or garden hoses instead of having to remember how to push
-data through wonky non-streaming custom APIs.
+一旦學習了 stream api，你就可以像樂高或是軟管將 streams 模組結合一起
+而不用去記憶如何在沒有串流特定的 APIs 中使用資料。
 
-Streams make programming in node simple, elegant, and composable.
+Streams 使在 node 中編寫程式更加簡單、優雅且可分割。
 
 # 基本
 
