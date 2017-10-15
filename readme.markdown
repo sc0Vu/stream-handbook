@@ -298,17 +298,13 @@ $ (echo abc; sleep 1; echo def; sleep 1; echo ghi) | node consume0.js
 null
 ```
 
-When data is available, the `'readable'` event fires and you can call `.read()`
-to fetch some data from the buffer.
+當有資料時會觸發 `'readable'` 事件接著你可以呼叫 `.read()` 從緩存裡獲得資料。
 
-When the stream is finished, `.read()` returns `null` because there are no more
-bytes to fetch.
+當 stream 結束且沒有資料可以讀取時 `.read()` 函數會回傳 `null`。
 
-You can also tell `.read(n)` to return `n` bytes of data. Reading a number of
-bytes is merely advisory and does not work for object streams, but all of the
-core streams support it.
+你也可以在呼叫 `.read(n)` 函數帶入參數 `n`，他會回傳 `n` 位元的資料。 讀取一些位元僅僅只是建議而且對物件 streams 沒有效，不過多數的 streams 都有支援。
 
-Here's an example of using `.read(n)` to buffer stdin into 3-byte chunks:
+這個範例使用 `.read(n)` to buffer stdin into 3-byte chunks:
 
 ``` js
 process.stdin.on('readable', function () {
@@ -317,7 +313,7 @@ process.stdin.on('readable', function () {
 });
 ```
 
-Running this example gives us incomplete data!
+都是不完全的資料！
 
 ```
 $ (echo abc; sleep 1; echo def; sleep 1; echo ghi) | node consume1.js 
@@ -348,10 +344,10 @@ $ (echo abc; sleep 1; echo def; sleep 1; echo ghi) | node consume2.js
 <Buffer 68 69 0a>
 ```
 
-You can also use `.unshift()` to put back data so that the same read logic will
+你也可以使用 `.unshift()` to put back data so that the same read logic will
 fire when `.read()` gives you more data than you wanted.
 
-Using `.unshift()` prevents us from making unnecessary buffer copies. Here we
+`.unshift()` prevents us from making unnecessary buffer copies. Here we
 can build a readable parser to split on newlines:
 
 ``` js
