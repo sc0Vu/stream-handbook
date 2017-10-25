@@ -229,7 +229,7 @@ $ node read1.js
 abcdefghijklmnopqrstuvwxyz
 ```
 
-這段程式碼我們只在消費者讀取的時候存入 `'a'` 到 `'z'`。
+這段程式碼我們只在使用者讀取 stream 的時候存入 `'a'` 到 `'z'`。
 
 `_read` 函數也可以提供 `size` 參數來設定消費者要讀取的位元數，不過 readable stream 也可以忽略 `size` 的設定。
 
@@ -304,7 +304,7 @@ null
 
 你也可以在呼叫 `.read(n)` 函數帶入參數 `n`，他會回傳 `n` 位元的資料。 讀取一些位元僅僅只是建議而且對物件 streams 沒有效，不過多數的 streams 都有支援。
 
-這個範例使用 `.read(n)` to buffer stdin into 3-byte chunks:
+這個範例使用 `.read(n)` 來讀取 3-byte 的塊資料:
 
 ``` js
 process.stdin.on('readable', function () {
@@ -322,9 +322,7 @@ $ (echo abc; sleep 1; echo def; sleep 1; echo ghi) | node consume1.js
 <Buffer 66 0a 67>
 ```
 
-This is because there is extra data left in internal buffers and we need to give
-node a "kick" to tell it that we are interested in more data past the 3 bytes
-that we've already read. A simple `.read(0)` will do this:
+因為在內部緩存中還有其他的資料，而我們必須將剩下的資料取出來，`.read(0)` 將可以做到:
 
 ``` js
 process.stdin.on('readable', function () {
@@ -334,7 +332,7 @@ process.stdin.on('readable', function () {
 });
 ```
 
-Now our code works as expected in 3-byte chunks!
+現在已經正常讀取 3-byte 的塊資料!
 
 ``` js
 $ (echo abc; sleep 1; echo def; sleep 1; echo ghi) | node consume2.js 
@@ -344,11 +342,9 @@ $ (echo abc; sleep 1; echo def; sleep 1; echo ghi) | node consume2.js
 <Buffer 68 69 0a>
 ```
 
-你也可以使用 `.unshift()` to put back data so that the same read logic will
-fire when `.read()` gives you more data than you wanted.
+當 `.read()` 給你太多資料時，你也可以使用 `.unshift()` 放回資料以便觸發讀取的邏輯。
 
-`.unshift()` prevents us from making unnecessary buffer copies. Here we
-can build a readable parser to split on newlines:
+`.unshift()` 讓我們不用複製非必要的緩存。這個範例我們建立一個可讀的解析器來拆分換行:
 
 ``` js
 var offset = 0;
@@ -383,9 +379,8 @@ $ tail -n +50000 /usr/share/dict/american-english | head -n10 | node lines.js
 'heartlessly'
 ```
 
-However, there are modules on npm such as
-[split](https://npmjs.org/package/split) that you should use instead of rolling
-your own line-parsing logic.
+線上有其他模組可以使用，這樣就不用自行開發，例如
+[split](https://npmjs.org/package/split)
 
 ## writable streams
 
