@@ -384,16 +384,15 @@ $ tail -n +50000 /usr/share/dict/american-english | head -n10 | node lines.js
 
 ## writable streams
 
-A writable stream is a stream you can `.pipe()` to but not from:
+可寫入的 stream 讓你可以使用 `.pipe()` 函數將資料串接:
 
 ``` js
 src.pipe(writableStream)
 ```
 
-### creating a writable stream
+### 建立一個 writable stream
 
-Just define a `._write(chunk, enc, next)` function and then you can pipe a
-readable stream in:
+只需要定義 `._write(chunk, enc, next)` 函數就可以了:
 
 ``` js
 var Writable = require('stream').Writable;
@@ -412,33 +411,27 @@ $ (echo beep; sleep 1; echo boop) | node write0.js
 <Buffer 62 6f 6f 70 0a>
 ```
 
-The first argument, `chunk` is the data that is written by the producer.
+第一個參數 `chunk` 是由生產者所寫數的資料。
 
-The second argument `enc` is a string with the string encoding, but only when
-`opts.decodeString` is `false` and you've been written a string.
+第二個參數 `enc` 是由字串表示的編碼格式只有當
+`opts.decodeString` 為 `false` 以及寫入的資料是字串時。
 
-The third argument, `next(err)` is the callback that tells the consumer that
-they can write more data. You can optionally pass an error object `err`, which
-emits an `'error'` event on the stream instance.
+第三個參數 `next(err)` 是使用者可以寫入更多資料的 callback。
+當 stream 觸發錯誤事件時，你也可以選擇性地帶入 `err` 物件。
 
-If the readable stream you're piping from writes strings, they will be converted
-into `Buffer`s unless you create your writable stream with
-`Writable({ decodeStrings: false })`.
+如果寫入的資料是字串，他將會被轉成 `Buffer` 型態除非帶入參數 `Writable({ decodeStrings: false })`。
 
-If the readable stream you're piping from writes objects, create your writable
-stream with `Writable({ objectMode: true })`.
+如果寫入的資料是物件，記得帶入參數 `Writable({ objectMode: true })`。
 
-### writing to a writable stream
+### 寫入 writable stream
 
-To write to a writable stream, just call `.write(data)` with the `data` you want
-to write!
+為了寫入 writable stream，需要呼叫 `.write(data)` 並帶入要寫入的 `data`！
 
 ``` js
 process.stdout.write('beep boop\n');
 ```
 
-To tell the destination writable stream that you're done writing, just call
-`.end()`. You can also give `.end(data)` some `data` to write before ending:
+為了停止寫入需要呼叫 `.end()` 函數，你也可以呼叫 `.end(data)` 並帶入最後要寫入的 `data`：
 
 ``` js
 var fs = require('fs');
@@ -457,11 +450,9 @@ $ cat message.txt
 beep boop
 ```
 
-If you care about high water marks and buffering, `.write()` returns false when
-there is more data than the `opts.highWaterMark` option passed to `Writable()`
-in the incoming buffer.
+如果在意高流量以及緩存，當在即將寫入緩存的資料多於建立 `Writable()` 時設定的 `opts.highWaterMark` 時， `.write()` 會回傳 `false`
 
-If you want to wait for the buffer to empty again, listen for a `'drain'` event.
+如果要等待緩存清空的時候，可以監聽 `'drain'` 事件。
 
 ## transform
 
